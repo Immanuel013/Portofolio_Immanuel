@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap");
+
+    * { padding: 0; margin: 0; font-family: "Poppins", sans-serif; box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      background-image: url("./img/background.jpg");
+      background-size: cover;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    nav { width: 100%; height: 10vh; position: relative; z-index: 1000; }
+
+    .nav-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .logo { color: white; font-size: 2rem; font-weight: bold; }
+    .logo span { color: rgb(58, 211, 3); text-shadow: 0 0 10px rgb(58, 211, 3); }
+
+    .hamburg, .cancel {
+      cursor: pointer;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      color: white;
+      display: none;
+      font-size: clamp(2.5rem, 0.5rem + 5vw, 3rem);
+    }
+
+    .nav-container .links { display: flex; }
+    .nav-container .links a {
+      font-size: 1.2rem;
+      color: white;
+      margin: 0 20px;
+      text-decoration: none;
+      font-weight: 550;
+      transition: 0.3s linear;
+    }
+    .nav-container .links a:hover { color: rgb(58, 211, 3); border-bottom: 2px solid rgb(58, 211, 3); }
+    .nav-container .link.active a { color: rgb(58, 211, 3); border-bottom: 2px solid rgb(58, 211, 3); }
+
+    .dropdown {
+      z-index: 1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: translateY(-500px);
+      width: 100%;
+      height: auto;
+      backdrop-filter: blur(4px) brightness(40%);
+      box-shadow: 0 0 20px black;
+      transition: 0.2s linear;
+    }
+    .dropdown .links a {
+      display: flex;
+      color: white;
+      text-decoration: none;
+      padding: 15px 0;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s linear;
+    }
+    .dropdown .links a:hover { background-color: rgb(58, 211, 3); }
+
+    /* About Section */
+    .about-container {
+      width: 100%;
+      min-height: 90vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-content {
+      width: 80%;
+      max-width: 1200px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 3rem;
+      color: white;
+    }
+
+    .about-header { text-align: center; margin-bottom: 2rem; }
+    .about-header h1 {
+      font-size: 2.5rem;
+      color: rgb(58, 211, 3);
+      text-shadow: 0 0 10px rgb(58, 211, 3);
+      margin-bottom: 1rem;
+    }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .about-image {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgb(58, 211, 3);
+    }
+    .about-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    .about-text h2 { color: rgb(58, 211, 3); margin-bottom: 1rem; }
+    .about-text p { line-height: 1.6; margin-bottom: 1rem; }
+
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem; }
+    .stat-item {
+      background: rgba(58, 211, 3, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid rgb(58, 211, 3);
+      cursor: pointer;
+    }
+    .stat-item h3 { color: rgb(58, 211, 3); font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+    .content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; padding: 2rem 0; }
+    .content-card { background: rgba(58, 211, 3, 0.1); border-radius: 15px; overflow: hidden; transition: all 0.3s ease; }
+    .content-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(58, 211, 3, 0.3); }
+
+    .card-image { width: 100%; height: 200px; overflow: hidden; }
+    .card-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card-info { padding: 1.5rem; }
+    .card-info h3 { color: rgb(58, 211, 3); margin-bottom: 0.5rem; }
+    .card-info h4 { color: white; opacity: 0.9; font-weight: 500; margin-bottom: 0.3rem; }
+    .card-info .period { font-size: 0.85rem; opacity: 0.85; margin-bottom: 0.8rem; }
+    .card-info p { font-size: 0.9rem; margin-bottom: 1rem; }
+
+    .card-info .technologies { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .technology-tag {
+      background: rgba(58, 211, 3, 0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      color: rgb(58, 211, 3);
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      background: rgb(58, 211, 3);
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+    }
+    .back-button:hover { background: rgb(45, 165, 2); transform: translateY(-2px); }
+
+    .award-icon { font-size: 2rem; color: rgb(58, 211, 3); margin-bottom: 1rem; }
+    .client-testimonial { font-style: italic; margin-top: 1rem; padding: 1rem; background: rgba(58, 211, 3, 0.05); border-radius: 10px; }
+
+    @media (max-width: 884px) {
+      .about-grid { grid-template-columns: 1fr; }
+      nav .logo { position: absolute; top: 16px; left: 15px; font-size: 1.5rem; }
+      .nav-container .links { display: none; }
+      .hamburg, .cancel { display: block; }
+    }
+
+    @media (max-width: 440px) {
+      .about-container { padding: 1rem; }
+      .about-content { width: 95%; padding: 1.5rem; }
+      .about-header h1 { font-size: 1.8rem; }
+      .about-text h2 { font-size: 1.4rem; }
+      .about-text p { font-size: 0.9rem; line-height: 1.4; }
+      .about-image { width: 100%; max-height: 250px; }
+      .stats { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+      .stat-item { padding: 0.8rem; }
+      .stat-item h3 { font-size: 1.2rem; }
+      .stat-item p { font-size: 0.8rem; }
+    }
+
+    /* PDF Button: kotak, no garis biru */
+    .pdf-link, .pdf-link:link, .pdf-link:visited {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgb(58, 211, 3);
+      color: #000 !important;
+      border-radius: 8px;
+      text-decoration: none !important;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.3s;
+      outline: none;
+      border: none;
+    }
+    .pdf-link:hover { background: rgb(45, 165, 2); transform: translateY(-2px); box-shadow: 0 0 10px rgba(58, 211, 3, 0.9); }
+    .pdf-link:active { transform: translateY(0px); }
+    .pdf-link:focus { outline: none; box-shadow: 0 0 0 3px rgba(58,211,3,0.35); }
+  </style>
+
+  <title>About - Portfolio Website</title>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-container">
+      <div class="logo" data-aos="zoom-in" data-aos-duration="1500">
+        Immanuel <span>Manurung</span>
+      </div>
+
+      <div class="links">
+        <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="100"><a href="index.html">Home</a></div>
+        <div class="link active" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="200"><a href="about.html">About</a></div>
+        <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300"><a href="skill.html">Skills</a></div>
+        <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="500"><a href="contact.html">Contact</a></div>
+      </div>
+    </div>
+
+    <i class="fa-solid fa-bars hamburg" onclick="hamburg()"></i>
+
+    <div class="dropdown">
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="skill.html">Skills</a>
+        <a href="contact.html">Contact</a>
+        <i class="fa-solid fa-xmark cancel" onclick="cancel()"></i>
+      </div>
+    </div>
+  </nav>
+
+  <div class="about-container">
+    <div class="about-content" id="aboutContent"></div>
+  </div>
+
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    // AOS aman
+    window.addEventListener("load", () => { if (window.AOS) AOS.init({ offset: 0 }); });
+    function refreshAOS(){ if(window.AOS) AOS.refresh(); }
+
+    function hamburg(){ const el=document.querySelector(".dropdown"); if(el) el.style.transform="translateY(0px)"; }
+    function cancel(){ const el=document.querySelector(".dropdown"); if(el) el.style.transform="translateY(-500px)"; }
+
+    function getInitialContentHTML(){
+      return `
+        <div class="about-header" data-aos="fade-down" data-aos-duration="1500">
+          <h1>About Me</h1>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-image" data-aos="fade-right" data-aos-duration="1500">
+            <img src="img/hack.webp" alt="About Image">
+          </div>
+
+          <div class="about-text" data-aos="fade-left" data-aos-duration="1500">
+            <h2>Who Am I?</h2>
+            <p>Saya memiliki pengalaman dalam implementasi dan monitoring keamanan sistem sebagai Cyber Security Analyst,
+              Security Engineer, dan SOC Analyst. Berpengalaman menggunakan SIEM (Wazuh) untuk monitoring real-time, analisis log,
+              deteksi brute force dan unauthorized access, serta investigasi insiden keamanan pada environment Linux dan multi-tenant.</p>
+            <p>Memiliki kemampuan dalam security monitoring, incident response, dan hardening server untuk menjaga keamanan dan integritas sistem.</p>
+
+            <div class="stats">
+              <div class="stat-item" data-aos="zoom-in" data-aos-duration="1500" data-aos-delay="200" onclick="showProjects()">
+                <h3>5+</h3><p>Projects Completed</p>
+              </div>
+              <div class="stat-item" data-aos="zoom-in" data-aos-duration="1500" data-aos-delay="400" onclick="showExperience()">
+                <h3>10+</h3><p>Sertifikat</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderInitialContent(){
+      const root=document.getElementById("aboutContent");
+      if(!root) return;
+      root.innerHTML=getInitialContentHTML();
+      refreshAOS();
+    }
+    function restoreInitialContent(){ renderInitialContent(); }
+    renderInitialContent();
+
+    function showProjects(){
+      const root=document.getElementById("aboutContent");
+      root.innerHTML=`
+        <a href="javascript:void(0)" class="back-button" onclick="restoreInitialContent()">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <div class="about-header" data-aos="fade-down" data-aos-duration="1500">
+          <h1>My Projects</h1>
+        </div>
+        <div class="content-grid">${generateProjectCards()}</div>
+      `;
+      refreshAOS();
+    }
+
+    function showExperience(){
+      const root=document.getElementById("aboutContent");
+      root.innerHTML=`
+        <a href="javascript:void(0)" class="back-button" onclick="restoreInitialContent()">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <div class="about-header" data-aos="fade-down" data-aos-duration="1500">
+          <h1>My Experience</h1>
+        </div>
+        <div class="content-grid">${generateExperienceCards()}</div>
+      `;
+      refreshAOS();
+    }
+
+    // Encode path biar aman kalau ada spasi
+    function safePath(p){ return encodeURI("./" + p); }
+
+    function generateProjectCards(){
+      const projects=[
+        {
+          title:"Website Sistem Informasi Puskesmas Janjimatogu",
+          image:"img/PA 1.png",
+          pdf:"Pdf/PA1.pdf",        // <-- sesuaikan nama file bener
+          description:"Mengembangkan platform web responsif untuk informasi kesehatan dan manajemen antrian online...",
+          technologies:["php","MySQL","HTML","CSS","JavaScript","Chart.js","Bootstrap"]
+        },
+        {
+          title:"Book Information System Based on Shelf Location Using ESP3 BLE",
+          image:"img/PA 2.jpeg",
+          pdf:"Pdf/Ble.pdf",             // <-- sesuaikan nama file bener (Ble.pdf vs ble.pdf)
+          description:"Mengembangkan sistem informasi buku berbasis lokasi rak menggunakan ESP32 BLE...",
+          technologies:["Android Studio","ESP32 (BLE)","Java / Kotlin","BLE","Firebase / SQLite","XML Layout","Arduino IDE"]
+        },
+        {
+          title:"Real-time Automation System for DDoS Based on Anomaly Detection and Route Nullification",
+          image:"img/TA 2.png",
+          pdf:"Pdf/Wazuh1.pdf",            // <-- sesuaikan
+          description:"Mengembangkan sistem otomatisasi real-time untuk mendeteksi dan memitigasi serangan DDoS...",
+          technologies:["Wazuh SIEM","Ubuntu-server","Kali linux","Hping3","Route Nullification","Linux Firewall","Tcp","Bash Scripting"]
+        },
+        {
+          title:"Implementasi SIEM Wazuh-Multi-Tenant Environment (Global, PLN, PLN Icon Plus)",
+          image:"img/T1.png",
+          pdf:"Pdf/Cye1.pdf",          // <-- sesuaikan
+          description:"Saya mengimplementasikan SIEM Wazuh untuk memonitor dan menganalisis aktivitas keamanan (Global, PLN, PLN Icon Plus)",
+          technologies:["Wazuh Server","Wazuh Agent","Wazuh Dashboard","Ubuntu","Kali","SSH","sudo","useradd","systemctl","nmap"]
+        },
+        {
+          title:"Simulasi network scanning (Elastic EDR)",
+          image:"img/Elastic.png",
+          pdf:"Pdf/Scan.pdf",     // <-- sesuaikan
+          description:"Pengujian untuk mengevaluasi deteksi scanning seperti port scanning dan service enumeration...",
+          technologies:["Kali Linux","Nmap","Tcpdump","Ubuntu Server","Elastic Agent","Elastic Defend","Kibana"]
+        }
+      ];
+
+      return projects.map(p=>{
+        const img=safePath(p.image);
+        const pdf=safePath(p.pdf);
+
+        return `
+          <div class="content-card" data-aos="fade-up">
+            <div class="card-image">
+              <img src="${img}" alt="${p.title}">
+            </div>
+            <div class="card-info">
+              <h3>${p.title}</h3>
+              <p>${p.description}</p>
+
+              <a class="pdf-link" href="${pdf}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-file-pdf"></i> Lihat PDF
+              </a>
+
+              <div class="technologies">
+                ${p.technologies.map(t=>`<span class="technology-tag">${t}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function generateExperienceCards() {
+
+  const certificates = [
+    {
+      title: "CompTIA Cybersecurity Analyst (CySA+) CS0-003",
+      company: "Ecourse",
+      period: "2026",
+      description: "Sertifikasi yang memvalidasi kemampuan dalam monitoring keamanan, analisis ancaman, dan respons insiden untuk melindungi sistem dan jaringan dari serangan siber.",
+      link: "Pdf/Comp.pdf"
+    },
+    {
+      title: "Palo Alto Networks Security Operations",
+      company: "Ecourse",
+      period: "2026",
+      description: "Sertifikasi yang membuktikan kemampuan dalam monitoring keamanan, analisis ancaman, dan penanganan insiden menggunakan teknologi keamanan dari Palo Alto Networks.",
+      link: "Pdf/Palo.pdf"
+    },
+    {
+      title: "Introduction to Ethical Hacking and Recon Techniques",
+      company: "Ecourse",
+      period: "2026",
+      description: "Pelatihan yang mempelajari dasar-dasar ethical hacking dan teknik reconnaissance untuk mengidentifikasi informasi target serta menemukan potensi kerentanan pada sistem atau jaringan.",
+      link: "Pdf/Int.pdf"
+    },
+    {
+      title: "Tips Melindungi Diri Dari Ancaman Phising dan Malware di Era Digital",
+      company: "Komdigital.id",
+      period: "2026",
+      description: "Pelatihan yang membahas cara mengenali dan mencegah serangan phishing serta malware untuk meningkatkan keamanan data dan aktivitas digital.",
+      link: "Pdf/Kom.pdf"
+    },
+    {
+      title: "Ethical Hacker For Dummies",
+      company: "Komdigital.id",
+      period: "2026",
+      description: "Pelatihan yang mempelajari dasar-dasar ethical hacking, termasuk teknik identifikasi kerentanan, pengujian keamanan sistem, dan pemahaman metode serangan siber untuk meningkatkan keamanan jaringan.",
+      link: "Pdf/Kom1.pdf"
+    },
+    {
+      title: "Dasar-dasar Keamanan AI",
+      company: "Komdigital.id",
+      period: "2026",
+      description: "Pelatihan yang membahas konsep dasar keamanan pada sistem kecerdasan buatan, termasuk potensi risiko, serangan terhadap model AI, dan cara melindungi sistem berbasis AI.",
+      link: "Pdf/Kom2.pdf"
+    },
+    {
+      title: "Mengamankan Diri dari Kejahatan Siber",
+      company: "Komdigital.id",
+      period: "2026",
+      description: "Pelatihan yang mempelajari cara mengenali, mencegah, dan melindungi diri dari berbagai ancaman kejahatan siber untuk menjaga keamanan data dan aktivitas digital.",
+      link: "Pdf/Kom3.pdf"
+    },
+    {
+      title: "COMPUTING TRACK",
+      company: "Huawei",
+      period: "2024",
+      description: "Program pembelajaran yang mencakup dasar-dasar komputasi, pemrograman, dan teknologi informasi untuk memahami konsep dan penerapan sistem komputer dalam berbagai bidang teknologi.",
+      link: "Pdf/Hua.pdf"
+    },
+    {
+      title: "Belajar Dasar-Dasar DevOps",
+      company: "Dicoding",
+      period: "2024",
+      description: "Pelatihan yang mempelajari konsep dasar DevOps, termasuk kolaborasi antara development dan operations, otomatisasi proses, serta pengelolaan deployment aplikasi secara efisien.",
+      link: "Pdf/Dev.pdf"
+    },
+    {
+      title: "Cloud Practitioner Essentials (Belajar Dasar AWS Cloud)",
+      company: "Dicoding",
+      period: "2024",
+      description: "Pelatihan yang mempelajari konsep dasar cloud computing di AWS, termasuk layanan utama, keamanan, arsitektur cloud, serta manfaat penggunaan AWS dalam infrastruktur IT.",
+      link: "Pdf/Clo.pdf"
+    },
+
+  ];
+
+  return certificates.map(cert => `
+    <div class="content-card" data-aos="fade-up">
+      <div class="card-info">
+        <h3>${cert.title}</h3>
+        <h4>${cert.company}</h4>
+        <p class="period">${cert.period}</p>
+        <p>${cert.description}</p>
+
+        <a class="pdf-link" href="${cert.link}" target="_blank">
+          <i class="fa-solid fa-certificate"></i> Lihat Sertifikat
+        </a>
+
+      </div>
+    </div>
+  `).join("");
+
+}
+
+  </script>
+</body>
+</html>
